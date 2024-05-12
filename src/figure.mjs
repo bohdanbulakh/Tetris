@@ -62,12 +62,12 @@ export class Figure {
             rotatedFigure.push(newColumn);
         }
 
-        this.figure = rotatedFigure;
+        return rotatedFigure;
     }
 
     #applyDirection(direction) {
         for (let i = 0; i < direction; i++) {
-            this.rotate();
+            this.figure = this.rotate();
         }
     }
 
