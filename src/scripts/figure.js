@@ -1,4 +1,4 @@
-import { random, getRandomElement } from './utils.mjs';
+import { random, getRandomElement } from './utils.js';
 
 export class Figure {
   #FIGURES = [

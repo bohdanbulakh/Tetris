@@ -61,7 +61,7 @@ body * {
     font-size: 40px;
 }
 
-.score-container .score {
+#score {
     display: inline-block;
     width: 60%;
     text-align: right;
