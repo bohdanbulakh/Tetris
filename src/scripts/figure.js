@@ -32,13 +32,13 @@ export class Figure {
   ];
 
   static COLORS = [
-    'red',
-    'blue',
-    'magenta',
-    'cyan',
-    'green',
-    'yellow',
-    'brown'
+    '#9d4edd',
+    '#014f86',
+    '#0a9396',
+    '#25a244',
+    '#ee9b00',
+    '#ca6702',
+    '#ae2012',
   ];
 
   constructor() {

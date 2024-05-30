@@ -9,11 +9,15 @@
 <div class="main-container">
     <canvas width="721" height="721" id="game-field"></canvas>
     <div class="side-container">
-        <div class="score"></div>
-        <div class="buttons">
-            <button id="start">Start</button>
-            <button id="pause">Pause</button>
+        <div class="score-container">
+            <span>Score</span>
+            <span class="score">0</span>
         </div>
+        <div class="next-figure-container">
+            <canvas id="next-figure"></canvas>
+        </div>
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
     </div>
 </div>
 <script src="src/scripts/index.mjs" type="module"></script>
