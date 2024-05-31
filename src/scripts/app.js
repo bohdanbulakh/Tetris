@@ -206,13 +206,40 @@ const params = {
   status: 'gameOver',
 };
 
+const showGameOver = (context, text) => {
+  const WIDTH = 500;
+  const HEIGHT = 150;
+
+  const center = {
+    x: context.canvas.width / 2,
+    y: context.canvas.height / 2,
+  };
+
+  context.globalAlpha = '0.9';
+  context.fillStyle = '#59652b';
+  context.fillRect(center.x - WIDTH / 2, center.y - HEIGHT / 2, WIDTH, HEIGHT);
+
+  context.globalAlpha = 1;
+  context.fillStyle = '#D0D6B3';
+  context.font = '72px medium';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(text, center.x, center.y);
+};
+
 const stepDown = () => {
+  if (params.score >= 999999) {
+    cancelAnimationFrame(params.animationId);
+    params.status = 'gameOver';
+    showGameOver(fieldCtx, 'YOU WON!');
+  }
   params.pos.row++;
 
   if (params.field.checkCollision(params.figures[0].matrix, params.pos)) {
     if (params.pos.row <= 0) {
       cancelAnimationFrame(params.animationId);
       params.status = 'gameOver';
+      showGameOver(fieldCtx, 'GAME OVER!');
       return;
     }
 
