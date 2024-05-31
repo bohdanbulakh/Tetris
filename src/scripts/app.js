@@ -203,7 +203,7 @@ const params = {
   pos: { ...START_POS },
   time: 0,
   score: 0,
-  status: 'running',
+  status: 'gameOver',
 };
 
 const stepDown = () => {
@@ -248,70 +248,82 @@ const loop = () => {
   }
 };
 
-
-const pauseGame = (button) => {
-  if (params.status === 'running') {
-    params.status = 'paused';
-    button.textContent = 'Resume';
-    cancelAnimationFrame(params.animationId);
-  } else {
-    button.textContent = 'Pause';
-    params.status = 'running';
-    params.animationId = requestAnimationFrame(loop);
-  }
-};
-
-document.getElementById('start').onclick = () => {
-  cancelAnimationFrame(params.animationId);
-
-  params.field.clear();
-  params.score = 0;
-  params.pos = { ...START_POS };
-  params.figures = [new Figure(), new Figure()];
-  params.status = 'running';
-
-  params.animationId = requestAnimationFrame(loop);
-};
-
-
 const pauseButton = document.getElementById('pause');
-pauseButton.onclick = () => pauseGame(pauseButton);
 
-document.addEventListener('keydown', (event) => {
-  if (params.status === 'gameOver') return;
-
-  if (['ArrowDown', 's', 'S'].includes(event.key)) {
+const actions = {
+  ArrowDown: (params) => {
+    if (params.status === 'gameOver') return;
     stepDown();
-  }
+  },
 
-  if (['ArrowUp', 'w', 'W'].includes(event.key)) {
+  ArrowUp: (params) => {
+    if (params.status === 'gameOver') return;
+
     params.figures[0].rotate();
     if (params.field.checkCollision(params.figures[0].matrix, params.pos)) {
       params.figures[0].applyDirection(3);
     }
-  }
+  },
 
-  if (
-    ['ArrowLeft', 'a', 'A'].includes(event.key) &&
-      !params.field.checkCollision(params.figures[0].matrix, {
-        ...params.pos,
-        col: params.pos.col - 1,
-      })
-  ) {
-    params.pos.col--;
-  }
+  ArrowLeft: (params) => {
+    if (params.status === 'gameOver') return;
 
-  if (
-    ['ArrowRight', 'd', 'D'].includes(event.key) &&
-      !params.field.checkCollision(params.figures[0].matrix, {
-        ...params.pos,
-        col: params.pos.col + 1,
-      })
-  ) {
-    params.pos.col++;
-  }
+    if (!params.field.checkCollision(params.figures[0].matrix, {
+      ...params.pos,
+      col: params.pos.col - 1,
+    })) {
+      params.pos.col--;
+    }
+  },
 
-  if (['p', 'P'].includes(event.key)) {
-    pauseGame(pauseButton);
+  ArrowRight: (params) => {
+    if (params.status === 'gameOver') return;
+
+    if (!params.field.checkCollision(params.figures[0].matrix, {
+      ...params.pos,
+      col: params.pos.col + 1,
+    })) {
+      params.pos.col++;
+    }
+  },
+
+  KeyP: (params) => {
+    switch (params.status) {
+    case 'gameOver':
+      return;
+    case 'running': {
+      params.status = 'paused';
+      pauseButton.textContent = 'Resume';
+      cancelAnimationFrame(params.animationId);
+      break;
+    }
+    case 'paused': {
+      pauseButton.textContent = 'Pause';
+      params.status = 'running';
+      params.animationId = requestAnimationFrame(loop);
+      break;
+    }
+    }
+  },
+
+  KeyS: (params) => {
+    cancelAnimationFrame(params.animationId);
+
+    params.field.clear();
+    params.score = 0;
+    params.pos = { ...START_POS };
+    params.figures = [new Figure(), new Figure()];
+    params.status = 'running';
+
+    params.animationId = requestAnimationFrame(loop);
   }
+};
+
+document.getElementById('start').onclick = () => actions.KeyS(params);
+pauseButton.onclick = () => actions.KeyP(params);
+
+document.addEventListener('keydown', (event) => {
+  try {
+    actions[event.code](params);
+  } catch (e) { /**/ }
 });
