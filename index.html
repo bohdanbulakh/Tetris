@@ -4,34 +4,35 @@
     <meta charset="UTF-8">
     <title>Tetris</title>
     <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" href="/src/img/js.svg">
 </head>
 <body>
-<div class="main-container">
+<main>
     <canvas width="721" height="721" id="game-field"></canvas>
-    <div class="side-container">
-        <div class="score-container">
+    <aside>
+        <section class="score-container">
             <span>Score</span>
             <span id="score">0</span>
-        </div>
-        <div class="next-figure-container">
+        </section>
+        <section class="next-figure-container">
             <canvas id="next-figure"></canvas>
-        </div>
-        <div class="info-container">
+        </section>
+        <section class="info-container">
             <img src="./src/img/arrow-up.png" alt="arrowUp" class="arrow col-2">
-            <div class="text">Rotate</div>
+            <div class="info">Rotate</div>
             <img src="./src/img/arrow-left.png" alt="arrowLeft" class="arrow">
             <img src="./src/img/arrow-down.png" alt="arrowDown" class="arrow">
             <img src="./src/img/arrow-right.png" alt="arrowRight" class="arrow">
-            <div class="text">Move figure</div>
-            <div class="arrow col-2">S</div>
-            <div class="text">Start new game</div>
-            <div class="arrow col-2">P</div>
-            <div class="text">Pause game</div>
-        </div>
+            <div class="info">Move figure</div>
+            <div class="col-2">S</div>
+            <div class="info">Start new game</div>
+            <div class="col-2">P</div>
+            <div class="info">Pause game</div>
+        </section>
         <button id="start">Start</button>
         <button id="pause">Pause</button>
-    </div>
-</div>
+    </aside>
+</main>
 <script src="src/scripts/app.js"></script>
 </body>
 </html>

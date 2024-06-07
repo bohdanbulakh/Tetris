@@ -1,14 +1,19 @@
 'use strict';
 
-function random(min, max) {
-  return min + Math.floor(Math.random() * (max - min + 1));
-}
-
-function getRandomElement(array) {
-  return array[random(0, array.length - 1)];
-}
+const random = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+const getRandomElement = (array) => array[random(0, array.length - 1)];
 
 class Figure {
+  static COLORS = [
+    '#9d4edd',
+    '#014f86',
+    '#0a9396',
+    '#25a244',
+    '#ee9b00',
+    '#ca6702',
+    '#ae2012',
+  ];
+
   #FIGURES = [
     [
       [0, 0, 1],
@@ -39,16 +44,6 @@ class Figure {
     ],
   ];
 
-  static COLORS = [
-    '#9d4edd',
-    '#014f86',
-    '#0a9396',
-    '#25a244',
-    '#ee9b00',
-    '#ca6702',
-    '#ae2012',
-  ];
-
   constructor() {
     this.matrix = getRandomElement(this.#FIGURES);
     this.applyDirection(random(0, 3));
@@ -56,17 +51,9 @@ class Figure {
   }
 
   rotate() {
-    const rotatedFigure = [];
-
-    for (let i = 0; i < this.matrix[0].length; i++) {
-      const newRow = [];
-
-      for (let j = 0; j < this.matrix.length; j++) {
-        newRow.push(this.matrix[this.matrix.length - 1 - j][i]);
-      }
-      rotatedFigure.push(newRow);
-    }
-    this.matrix = rotatedFigure;
+    this.matrix = this.matrix[0].map((_, colIndex) =>
+      this.matrix.map((row) => row[colIndex]).reverse()
+    );
   }
 
   applyDirection(direction) {
@@ -76,13 +63,9 @@ class Figure {
   }
 
   #applyColor(colorIndex) {
-    for (let i = 0; i < this.matrix.length; i++) {
-      for (let j = 0; j < this.matrix[i].length; j++) {
-        if (this.matrix[i][j]) {
-          this.matrix[i][j] = colorIndex;
-        }
-      }
-    }
+    this.matrix = this.matrix.map(
+      (row) => row.map((cell) => (cell ? colorIndex : cell))
+    );
   }
 
   draw(context, size, position) {
@@ -95,12 +78,12 @@ class Figure {
             context.fillStyle = Figure.COLORS[this.matrix[i][j] - 1];
             context.fillRect(
               1 + (j + position.col) * size,
-              1 + (startRow + i) * size, size - 1, size - 1
+              1 + (startRow + i) * size,
+              size - 1, size - 1
             );
           }
         }
       }
-
     }
   }
 }
@@ -117,8 +100,8 @@ class Field {
   checkCollision(figure, position) {
     if (
       position.row >= this.matrix.length ||
-          position.col + figure[0].length > this.matrix[0].length ||
-          position.col < 0
+        position.col + figure[0].length > this.matrix[0].length ||
+        position.col < 0
     ) {
       return true;
     }
@@ -141,14 +124,13 @@ class Field {
     const startRow = position.row - (figure.length - 1);
     for (let i = 0; i < figure.length; i++) {
       if (startRow + i >= 0) {
-        for (let j = 0; j < figure[0].length; j++) {
+        for (let j = 0; j < figure[i].length; j++) {
           if (figure[i][j]) {
             this.matrix[startRow + i][position.col + j] = figure[i][j];
           }
         }
       }
     }
-
   }
 
   deleteFilledRows() {
@@ -174,7 +156,10 @@ class Field {
         if (this.matrix[i][j]) {
           context.fillStyle = Figure.COLORS[this.matrix[i][j] - 1];
           context.fillRect(
-            1 + j * cellSize, 1 + i * cellSize, cellSize - 1, cellSize - 1
+            1 + j * cellSize,
+            1 + i * cellSize,
+            cellSize - 1,
+            cellSize - 1
           );
         }
       }
@@ -197,7 +182,7 @@ const START_POS = {
 };
 
 const params = {
-  animationId: undefined,
+  animationId: null,
   field: new Field(CELLS_COUNT, CELLS_COUNT),
   figures: [],
   pos: { ...START_POS },
@@ -318,18 +303,16 @@ const actions = {
     switch (params.status) {
     case 'gameOver':
       return;
-    case 'running': {
+    case 'running':
       params.status = 'paused';
       pauseButton.textContent = 'Resume';
       cancelAnimationFrame(params.animationId);
       break;
-    }
-    case 'paused': {
+    case 'paused':
       pauseButton.textContent = 'Pause';
       params.status = 'running';
       params.animationId = requestAnimationFrame(loop);
       break;
-    }
     }
   },
 
@@ -350,7 +333,7 @@ document.getElementById('start').onclick = () => actions.KeyS(params);
 pauseButton.onclick = () => actions.KeyP(params);
 
 document.addEventListener('keydown', (event) => {
-  try {
+  if (actions[event.code]) {
     actions[event.code](params);
-  } catch (e) { /**/ }
+  }
 });
